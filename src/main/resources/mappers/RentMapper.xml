@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.carrent.dao.RentDao">
+  <resultMap id="BaseResultMap" type="com.example.carrent.bean.Rent">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="car_id" jdbcType="INTEGER" property="carId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="rent_date" jdbcType="DATE" property="rentDate" />
+    <result column="supposed_return_date" jdbcType="DATE" property="supposedReturnDate" />
+    <result column="actual_return_date" jdbcType="DATE" property="actualReturnDate" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, car_id, user_id, rent_date, supposed_return_date, actual_return_date
+  </sql>
+  <select id="selectByExample" parameterType="com.example.carrent.bean.RentExample" resultType="com.example.carrent.bean.Rent">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from rent
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="com.example.carrent.bean.Rent">
+    select 
+    <include refid="Base_Column_List" />
+    from rent
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAllRents" resultType="com.example.carrent.bean.Rent">
+    select
+    <include refid="Base_Column_List" />
+    from rent
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from rent
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.example.carrent.bean.RentExample">
+    delete from rent
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.example.carrent.bean.Rent">
+    insert into rent (id, car_id, user_id, 
+      rent_date, supposed_return_date, actual_return_date
+      )
+    values (#{id,jdbcType=INTEGER}, #{carId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{rentDate,jdbcType=DATE}, #{supposedReturnDate,jdbcType=DATE}, #{actualReturnDate,jdbcType=DATE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.carrent.bean.Rent">
+    insert into rent
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="carId != null">
+        car_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="rentDate != null">
+        rent_date,
+      </if>
+      <if test="supposedReturnDate != null">
+        supposed_return_date,
+      </if>
+      <if test="actualReturnDate != null">
+        actual_return_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="carId != null">
+        #{carId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="rentDate != null">
+        #{rentDate,jdbcType=DATE},
+      </if>
+      <if test="supposedReturnDate != null">
+        #{supposedReturnDate,jdbcType=DATE},
+      </if>
+      <if test="actualReturnDate != null">
+        #{actualReturnDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.example.carrent.bean.RentExample" resultType="java.lang.Long">
+    select count(*) from rent
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update rent
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.carId != null">
+        car_id = #{record.carId,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.rentDate != null">
+        rent_date = #{record.rentDate,jdbcType=DATE},
+      </if>
+      <if test="record.supposedReturnDate != null">
+        supposed_return_date = #{record.supposedReturnDate,jdbcType=DATE},
+      </if>
+      <if test="record.actualReturnDate != null">
+        actual_return_date = #{record.actualReturnDate,jdbcType=DATE},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update rent
+    set id = #{record.id,jdbcType=INTEGER},
+      car_id = #{record.carId,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      rent_date = #{record.rentDate,jdbcType=DATE},
+      supposed_return_date = #{record.supposedReturnDate,jdbcType=DATE},
+      actual_return_date = #{record.actualReturnDate,jdbcType=DATE}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.carrent.bean.Rent">
+    update rent
+    <set>
+      <if test="carId != null">
+        car_id = #{carId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="rentDate != null">
+        rent_date = #{rentDate,jdbcType=DATE},
+      </if>
+      <if test="supposedReturnDate != null">
+        supposed_return_date = #{supposedReturnDate,jdbcType=DATE},
+      </if>
+      <if test="actualReturnDate != null">
+        actual_return_date = #{actualReturnDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.carrent.bean.Rent">
+    update rent
+    set car_id = #{carId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      rent_date = #{rentDate,jdbcType=DATE},
+      supposed_return_date = #{supposedReturnDate,jdbcType=DATE},
+      actual_return_date = #{actualReturnDate,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
