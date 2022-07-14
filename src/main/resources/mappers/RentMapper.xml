@@ -105,7 +105,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.example.carrent.bean.Rent">
+  <insert id="insert" parameterType="com.example.carrent.bean.Rent" useGeneratedKeys="true" keyProperty="id">
     insert into rent (id, car_id, user_id, 
       rent_date, supposed_return_date, actual_return_date
       )

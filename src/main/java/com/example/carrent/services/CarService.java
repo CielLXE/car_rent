@@ -53,7 +53,7 @@ public class CarService {
      * @return true:success false:fail
      */
     public boolean addCar(Car car) {
-        return carDao.insert(car) >= 1;
+        return carDao.insert(car) == 1;
     }
 
     /**
@@ -68,7 +68,11 @@ public class CarService {
         if (now == null) {
             return false;
         }
-        return carDao.updateByPrimaryKey(car) == 1;
+        //don't allow to update a car's avaliable
+        if (car.getAvailable() != null && !now.getAvailable().equals(car.getAvailable())) {
+            return false;
+        }
+        return carDao.updateByPrimaryKeySelective(car) == 1;
     }
 
 }

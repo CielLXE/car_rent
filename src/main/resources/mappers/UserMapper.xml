@@ -103,7 +103,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.example.carrent.bean.User">
+  <insert id="insert" parameterType="com.example.carrent.bean.User" useGeneratedKeys="true" keyProperty="id">
     insert into user (id, name, password, 
       user_role)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 

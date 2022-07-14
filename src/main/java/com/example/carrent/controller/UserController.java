@@ -27,7 +27,7 @@ public class UserController {
         if (user != null) {
             return user;
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user did not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User did not exist");
         }
     }
 
@@ -37,25 +37,25 @@ public class UserController {
         if (loginUser != null) {
             return loginUser;
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username and password did not match");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username and password did not match");
         }
     }
 
     @PostMapping(value = "")
-    public void addUser(@RequestBody User user) {
+    public int addUser(@RequestBody User user) {
         if (userService.addUser(user)) {
-            throw new ResponseStatusException(HttpStatus.CREATED, "user created");
+            return user.getId();
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "name exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name exists");
         }
     }
 
     @PutMapping(value = "/{id}")
     public void putUser(@RequestBody User user) {
         if (userService.updateUser(user)) {
-            throw new ResponseStatusException(HttpStatus.OK, "user updated");
+            throw new ResponseStatusException(HttpStatus.OK, "User updated");
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user did not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User did not exist or repeated user name");
         }
     }
 

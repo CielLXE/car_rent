@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -96,7 +95,8 @@ public class RentControllerUnitTests {
         mvc.perform(post("/rent")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is(3)));
 
         mvc.perform(get("/rent/3"))
                 .andExpect(status().isOk())
@@ -177,25 +177,4 @@ public class RentControllerUnitTests {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    public void updateRentExists() throws Exception {
-        Rent rent = new Rent(2,2,1,new Date(),new Date(),null);
-        String request = om.writeValueAsString(rent);
-
-        mvc.perform(put("/rent/1")
-                .content(request)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void updateRentNotExist() throws Exception {
-        Rent rent = new Rent(3,1,2,new Date(),new Date(),null);
-        String request = om.writeValueAsString(rent);
-
-        mvc.perform(put("/rent/3")
-                .content(request)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
 }

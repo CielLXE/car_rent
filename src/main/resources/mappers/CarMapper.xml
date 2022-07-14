@@ -103,7 +103,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.example.carrent.bean.Car">
+  <insert id="insert" parameterType="com.example.carrent.bean.Car" useGeneratedKeys="true" keyProperty="id">
     insert into car (id, brand, model, 
       available)
     values (#{id,jdbcType=INTEGER}, #{brand,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, 

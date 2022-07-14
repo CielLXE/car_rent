@@ -11,7 +11,6 @@ import com.example.carrent.enums.UserRoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
@@ -43,8 +42,7 @@ public class RentService {
      * @return list of rents
      */
     public List<Rent> getAllRents() {
-        List<Rent> rents = rentDao.selectAllRents();
-        return rents;
+        return rentDao.selectAllRents();
     }
 
     /**
@@ -66,7 +64,7 @@ public class RentService {
         }
         //set car to unavailable
         car.setAvailable((byte) CarAvailableStatusEnum.unavailable.getCode());
-        carDao.updateByPrimaryKey(car);
+        carDao.updateByPrimaryKeySelective(car);
         //insert new rent record
         return rentDao.insert(rent) == 1;
     }
@@ -90,21 +88,7 @@ public class RentService {
         }
         rent.setActualReturnDate(new java.util.Date());
         car.setAvailable((byte) CarAvailableStatusEnum.available.getCode());
-        return carDao.updateByPrimaryKey(car) == 1 && rentDao.updateByPrimaryKey(rent) == 1;
+        return carDao.updateByPrimaryKeySelective(car) == 1 && rentDao.updateByPrimaryKeySelective(rent) == 1;
     }
 
-    /**
-     * update a rent's information
-     *
-     * @param rent
-     * @return true:success false:fail
-     */
-    public boolean updateRent(Rent rent) {
-        Rent now = rentDao.selectByPrimaryKey(rent.getId());
-        //not exist
-        if (now == null) {
-            return false;
-        }
-        return rentDao.updateByPrimaryKey(rent) == 1;
-    }
 }

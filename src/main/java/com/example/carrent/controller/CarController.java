@@ -28,7 +28,7 @@ public class CarController {
         if (car != null) {
             return car;
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "car did not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car did not exist");
         }
     }
 
@@ -38,11 +38,11 @@ public class CarController {
     }
 
     @PostMapping(value = "")
-    public void addCar(@RequestBody Car car) {
+    public int addCar(@RequestBody Car car) {
         if (carService.addCar(car)) {
-            throw new ResponseStatusException(HttpStatus.CREATED, "Car added");
+            return car.getId();
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Add car fail");
         }
     }
 
@@ -51,7 +51,7 @@ public class CarController {
         if (carService.updateCar(car)) {
             throw new ResponseStatusException(HttpStatus.OK, "Car updated");
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car not exist or available modification prohibited");
         }
     }
 }

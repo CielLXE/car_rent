@@ -76,6 +76,7 @@ public class UserControllerUnitTests {
         mvc.perform(post("/user/login")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("jason")))
                 .andExpect(jsonPath("$.password", is("12345")))
                 .andExpect(jsonPath("$.userRole", is(1)));
@@ -122,7 +123,8 @@ public class UserControllerUnitTests {
         mvc.perform(post("/user")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is(3)));
         mvc.perform(get("/user/3"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(3)))
@@ -140,6 +142,23 @@ public class UserControllerUnitTests {
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        mvc.perform(get("/user/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("jason")))
+                .andExpect(jsonPath("$.password", is("31245")))
+                .andExpect(jsonPath("$.userRole", is(1)));
+    }
+
+    @Test
+    public void updateUserWithOtherExistsName() throws Exception {
+        User user = new User(1, "admin", "31245", (byte)UserRoleEnum.normal.getCode());
+        String request = om.writeValueAsString(user);
+
+        mvc.perform(put("/user/1")
+                .content(request)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

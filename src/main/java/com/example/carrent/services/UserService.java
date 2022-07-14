@@ -80,6 +80,16 @@ public class UserService {
         if (now == null) {
             return false;
         }
-        return userDao.updateByPrimaryKey(user) == 1;
+        //judge name
+        if (user.getName() != null && !user.getName().equals(now.getName())) {
+            UserExample example = new UserExample();
+            UserExample.Criteria criteria = example.createCriteria();
+            criteria.andNameEqualTo(user.getName());
+            List<User> store = userDao.selectByExample(example);
+            if (store != null && store.size() != 0) {
+                return false;
+            }
+        }
+        return userDao.updateByPrimaryKeySelective(user) == 1;
     }
 }

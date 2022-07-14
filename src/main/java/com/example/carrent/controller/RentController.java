@@ -27,25 +27,16 @@ public class RentController {
         if (rent != null) {
             return rent;
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "rent not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rent not exist");
         }
     }
 
     @PostMapping(value = "")
-    public void addRent(@RequestBody Rent Rent) {
-        if (rentService.addRent(Rent)) {
-            throw new ResponseStatusException(HttpStatus.CREATED, "Rent created");
+    public int addRent(@RequestBody Rent rent) {
+        if (rentService.addRent(rent)) {
+            return rent.getId();
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
-        }
-    }
-
-    @PutMapping(value = "/{id}")
-    public void putRent(@RequestBody Rent Rent) {
-        if (rentService.updateRent(Rent)) {
-            throw new ResponseStatusException(HttpStatus.OK, "Rent updated");
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fail to add a new rent");
         }
     }
 
@@ -54,7 +45,7 @@ public class RentController {
         if (rentService.returnRent(id)) {
             throw new ResponseStatusException(HttpStatus.OK, "Rent returned");
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rent not exist or already returned");
         }
     }
 

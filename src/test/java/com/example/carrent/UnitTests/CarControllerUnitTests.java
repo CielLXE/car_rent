@@ -93,12 +93,19 @@ public class CarControllerUnitTests {
         mvc.perform(post("/car")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is(3)));
+        mvc.perform(get("/car/3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(3)))
+                .andExpect(jsonPath("$.brand", is("Toyota")))
+                .andExpect(jsonPath("$.model", is("Camry")))
+                .andExpect(jsonPath("$.available", is(1)));
     }
 
     @Test
     public void updateCarExists() throws Exception {
-        Car car = new Car(1,"Toyota", "Century", (byte)CarAvailableStatusEnum.available.getCode());
+        Car car = new Car(1,"Toyota", "Century", null);
         String request = om.writeValueAsString(car);
 
         mvc.perform(put("/car/1")
@@ -111,6 +118,17 @@ public class CarControllerUnitTests {
                 .andExpect(jsonPath("$.brand", is("Toyota")))
                 .andExpect(jsonPath("$.model", is("Century")))
                 .andExpect(jsonPath("$.available", is(1)));
+    }
+
+    @Test
+    public void updateCarExistsModifyAvailable() throws Exception {
+        Car car = new Car(1,"Toyota", "Century", (byte)CarAvailableStatusEnum.unavailable.getCode());
+        String request = om.writeValueAsString(car);
+
+        mvc.perform(put("/car/1")
+                .content(request)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
