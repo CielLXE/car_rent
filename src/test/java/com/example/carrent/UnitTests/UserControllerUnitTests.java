@@ -105,7 +105,7 @@ public class UserControllerUnitTests {
 
     @Test
     public void addUserExist() throws Exception {
-        User user = new User(1, "jason", "54321", (byte)UserRoleEnum.normal.getCode());
+        User user = new User(3, "jason", "54321", (byte)UserRoleEnum.normal.getCode());
         String request = om.writeValueAsString(user);
 
         mvc.perform(post("/user")
