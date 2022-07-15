@@ -1,7 +1,11 @@
 package com.example.carrent.controller;
 
+import com.example.carrent.bean.Car;
 import com.example.carrent.bean.Rent;
+import com.example.carrent.bean.Result;
 import com.example.carrent.services.RentService;
+import com.example.carrent.utils.ResultGenerator;
+import com.example.carrent.utils.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,35 +21,44 @@ public class RentController {
     private RentService rentService;
 
     @GetMapping(value = "")
-    public List<Rent> getAllRents() {
-        return rentService.getAllRents();
+    public Result getAllRents() {
+        List<Rent> rents = rentService.getAllRents();
+        return ResultGenerator.genSuccessResult(rents);
     }
 
     @GetMapping(value = "/{id}")
-    public Rent getRentById(@PathVariable Integer id) {
+    public Result getRentById(@PathVariable Integer id) {
         Rent rent = rentService.getRentById(id);
         if (rent != null) {
-            return rent;
+            return ResultGenerator.genSuccessResult(rent);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rent not exist");
+            return ResultGenerator.genFailResult("rent not exist");
         }
     }
 
     @PostMapping(value = "")
-    public int addRent(@RequestBody Rent rent) {
-        if (rentService.addRent(rent)) {
-            return rent.getId();
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fail to add a new rent");
+    public Result addRent(@RequestBody Rent rent) {
+        try {
+            if (rentService.addRent(rent)) {
+                return ResultGenerator.genSuccessResult(rent.getId());
+            } else {
+                return ResultGenerator.genFailResult("Fail to add a new rent");
+            }
+        } catch (ServiceException e) {
+            return ResultGenerator.genFailResult(e.getMessage());
         }
     }
 
     @PutMapping(value = "/{id}/return")
-    public void returnRent(@PathVariable Integer id) {
-        if (rentService.returnRent(id)) {
-            throw new ResponseStatusException(HttpStatus.OK, "Rent returned");
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rent not exist or already returned");
+    public Result returnRent(@PathVariable Integer id) {
+        try {
+            if (rentService.returnRent(id)) {
+                return ResultGenerator.genSuccessResult();
+            } else {
+                return ResultGenerator.genFailResult("Fail to return a rent");
+            }
+        }catch (ServiceException e){
+            return ResultGenerator.genFailResult(e.getMessage());
         }
     }
 

@@ -49,39 +49,42 @@ public class RentControllerUnitTests {
     public void getAllRents() throws Exception{
         mvc.perform(get("/rent")
                 .content(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].carId", is(1)))
-                .andExpect(jsonPath("$[0].userId", is(2)))
-                .andExpect(jsonPath("$[0].rentDate", is("2022-07-10")))
-                .andExpect(jsonPath("$[0].supposedReturnDate", is("2022-07-12")))
-                .andExpect(jsonPath("$[0].actualReturnDate", is("2022-07-11")))
-                .andExpect(jsonPath("$[1].id", is(2)))
-                .andExpect(jsonPath("$[1].carId", is(2)))
-                .andExpect(jsonPath("$[1].userId", is(1)))
-                .andExpect(jsonPath("$[1].rentDate", is("2022-07-11")))
-                .andExpect(jsonPath("$[1].supposedReturnDate", is("2022-07-15")))
-                .andExpect(jsonPath("$[1].actualReturnDate", is(IsNull.nullValue())));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data", hasSize(2)))
+                .andExpect(jsonPath("$.data[0].id", is(1)))
+                .andExpect(jsonPath("$.data[0].carId", is(1)))
+                .andExpect(jsonPath("$.data[0].userId", is(2)))
+                .andExpect(jsonPath("$.data[0].rentDate", is("2022-07-10")))
+                .andExpect(jsonPath("$.data[0].supposedReturnDate", is("2022-07-12")))
+                .andExpect(jsonPath("$.data[0].actualReturnDate", is("2022-07-11")))
+                .andExpect(jsonPath("$.data[1].id", is(2)))
+                .andExpect(jsonPath("$.data[1].carId", is(2)))
+                .andExpect(jsonPath("$.data[1].userId", is(1)))
+                .andExpect(jsonPath("$.data[1].rentDate", is("2022-07-11")))
+                .andExpect(jsonPath("$.data[1].supposedReturnDate", is("2022-07-15")))
+                .andExpect(jsonPath("$.data[1].actualReturnDate", is(IsNull.nullValue())));
 
     }
 
     @Test
     public void getRentByIdExists() throws Exception {
         mvc.perform(get("/rent/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.carId", is(1)))
-                .andExpect(jsonPath("$.userId", is(2)))
-                .andExpect(jsonPath("$.rentDate", is("2022-07-10")))
-                .andExpect(jsonPath("$.supposedReturnDate", is("2022-07-12")))
-                .andExpect(jsonPath("$.actualReturnDate", is("2022-07-11")));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.id", is(1)))
+                .andExpect(jsonPath("$.data.carId", is(1)))
+                .andExpect(jsonPath("$.data.userId", is(2)))
+                .andExpect(jsonPath("$.data.rentDate", is("2022-07-10")))
+                .andExpect(jsonPath("$.data.supposedReturnDate", is("2022-07-12")))
+                .andExpect(jsonPath("$.data.actualReturnDate", is("2022-07-11")));
     }
 
     @Test
     public void getRentByIdNotExist() throws Exception {
         mvc.perform(get("/rent/3"))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("rent not exist")));
     }
 
     @Test
@@ -95,17 +98,19 @@ public class RentControllerUnitTests {
         mvc.perform(post("/rent")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is(3)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data", is(3)));
 
         mvc.perform(get("/rent/3"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(3)))
-                .andExpect(jsonPath("$.carId", is(1)))
-                .andExpect(jsonPath("$.userId", is(1)))
-                .andExpect(jsonPath("$.rentDate", is("2022-07-16")))
-                .andExpect(jsonPath("$.supposedReturnDate", is("2022-07-18")))
-                .andExpect(jsonPath("$.actualReturnDate", is(IsNull.nullValue())));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.id", is(3)))
+                .andExpect(jsonPath("$.data.carId", is(1)))
+                .andExpect(jsonPath("$.data.userId", is(1)))
+                .andExpect(jsonPath("$.data.rentDate", is("2022-07-16")))
+                .andExpect(jsonPath("$.data.supposedReturnDate", is("2022-07-18")))
+                .andExpect(jsonPath("$.data.actualReturnDate", is(IsNull.nullValue())));
     }
 
     @Test
@@ -116,7 +121,8 @@ public class RentControllerUnitTests {
         mvc.perform(post("/rent")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("car not available")));
     }
 
     @Test
@@ -127,7 +133,8 @@ public class RentControllerUnitTests {
         mvc.perform(post("/rent")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("car not exist")));
     }
 
     @Test
@@ -138,7 +145,8 @@ public class RentControllerUnitTests {
         mvc.perform(post("/rent")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("user is an admin")));
     }
 
     @Test
@@ -149,32 +157,37 @@ public class RentControllerUnitTests {
         mvc.perform(post("/rent")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("user not exist")));
     }
 
     @Test
     public void returnRent() throws Exception {
         mvc.perform(put("/rent/2/return")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")));
         mvc.perform(get("/car/2"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(2)))
-                .andExpect(jsonPath("$.available", is(1)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.id", is(2)))
+                .andExpect(jsonPath("$.data.available", is(1)));
     }
 
     @Test
     public void returnRentAlreadyReturned() throws Exception {
         mvc.perform(put("/rent/1/return")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("rent already returned")));
     }
 
     @Test
     public void returnRentNotExists() throws Exception {
         mvc.perform(put("/rent/3/return")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("rent not exist")));
     }
 
 }

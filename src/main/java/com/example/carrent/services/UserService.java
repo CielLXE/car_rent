@@ -4,6 +4,7 @@ import com.example.carrent.bean.CarExample;
 import com.example.carrent.bean.User;
 import com.example.carrent.bean.UserExample;
 import com.example.carrent.dao.UserDao;
+import com.example.carrent.utils.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,8 +46,11 @@ public class UserService {
         UserExample.Criteria criteria = example.createCriteria();
         criteria.andNameEqualTo(user.getName());
         List<User> store = userDao.selectByExample(example);
-        if (store == null || store.size() == 0 || !store.get(0).getPassword().equals(user.getPassword())) {
-            return null;
+        if (store == null || store.size() == 0) {
+            throw new ServiceException("user not exist");
+        }
+        if (!store.get(0).getPassword().equals(user.getPassword())) {
+            throw new ServiceException("username and password did not match");
         }
         return store.get(0);
     }
@@ -63,7 +67,7 @@ public class UserService {
         criteria.andNameEqualTo(user.getName());
         List<User> store = userDao.selectByExample(example);
         if (store != null && store.size() != 0) {
-            return false;
+            throw new ServiceException("name exists");
         }
         return userDao.insert(user) == 1;
     }
@@ -78,7 +82,7 @@ public class UserService {
         User now = userDao.selectByPrimaryKey(user.getId());
         //not exist
         if (now == null) {
-            return false;
+            throw new ServiceException("user not exist");
         }
         //judge name
         if (user.getName() != null && !user.getName().equals(now.getName())) {
@@ -87,7 +91,7 @@ public class UserService {
             criteria.andNameEqualTo(user.getName());
             List<User> store = userDao.selectByExample(example);
             if (store != null && store.size() != 0) {
-                return false;
+                throw new ServiceException("name exists");
             }
         }
         return userDao.updateByPrimaryKeySelective(user) == 1;

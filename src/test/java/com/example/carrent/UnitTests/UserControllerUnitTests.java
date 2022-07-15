@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = "application.properties")
@@ -40,32 +39,35 @@ public class UserControllerUnitTests {
     public void getAllUsers() throws Exception{
         mvc.perform(get("/user")
                 .content(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].name", is("jason")))
-                .andExpect(jsonPath("$[0].password", is("12345")))
-                .andExpect(jsonPath("$[0].userRole", is(1)))
-                .andExpect(jsonPath("$[1].id", is(2)))
-                .andExpect(jsonPath("$[1].name", is("admin")))
-                .andExpect(jsonPath("$[1].password", is("admin")))
-                .andExpect(jsonPath("$[1].userRole", is(2)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data", hasSize(2)))
+                .andExpect(jsonPath("$.data[0].id", is(1)))
+                .andExpect(jsonPath("$.data[0].name", is("jason")))
+                .andExpect(jsonPath("$.data[0].password", is("12345")))
+                .andExpect(jsonPath("$.data[0].userRole", is(1)))
+                .andExpect(jsonPath("$.data[1].id", is(2)))
+                .andExpect(jsonPath("$.data[1].name", is("admin")))
+                .andExpect(jsonPath("$.data[1].password", is("admin")))
+                .andExpect(jsonPath("$.data[1].userRole", is(2)));
     }
 
     @Test
     public void getUserByIdExists() throws Exception {
         mvc.perform(get("/user/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.name", is("jason")))
-                .andExpect(jsonPath("$.password", is("12345")))
-                .andExpect(jsonPath("$.userRole", is(1)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.id", is(1)))
+                .andExpect(jsonPath("$.data.name", is("jason")))
+                .andExpect(jsonPath("$.data.password", is("12345")))
+                .andExpect(jsonPath("$.data.userRole", is(1)));
     }
 
     @Test
     public void getUserByIdNotExist() throws Exception {
         mvc.perform(get("/user/3"))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("user not exist")));
     }
 
     @Test
@@ -76,10 +78,11 @@ public class UserControllerUnitTests {
         mvc.perform(post("/user/login")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("jason")))
-                .andExpect(jsonPath("$.password", is("12345")))
-                .andExpect(jsonPath("$.userRole", is(1)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.name", is("jason")))
+                .andExpect(jsonPath("$.data.password", is("12345")))
+                .andExpect(jsonPath("$.data.userRole", is(1)));
     }
 
     @Test
@@ -90,7 +93,8 @@ public class UserControllerUnitTests {
         mvc.perform(post("/user/login")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("user not exist")));
     }
 
     @Test
@@ -101,7 +105,8 @@ public class UserControllerUnitTests {
         mvc.perform(post("/user/login")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("username and password did not match")));
     }
 
     @Test
@@ -112,7 +117,8 @@ public class UserControllerUnitTests {
         mvc.perform(post("/user")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("name exists")));
     }
 
     @Test
@@ -123,14 +129,16 @@ public class UserControllerUnitTests {
         mvc.perform(post("/user")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is(3)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data", is(3)));
         mvc.perform(get("/user/3"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(3)))
-                .andExpect(jsonPath("$.name", is("sue")))
-                .andExpect(jsonPath("$.password", is("54321")))
-                .andExpect(jsonPath("$.userRole", is(1)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.id", is(3)))
+                .andExpect(jsonPath("$.data.name", is("sue")))
+                .andExpect(jsonPath("$.data.password", is("54321")))
+                .andExpect(jsonPath("$.data.userRole", is(1)));
     }
 
     @Test
@@ -141,13 +149,15 @@ public class UserControllerUnitTests {
         mvc.perform(put("/user/1")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")));
         mvc.perform(get("/user/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.name", is("jason")))
-                .andExpect(jsonPath("$.password", is("31245")))
-                .andExpect(jsonPath("$.userRole", is(1)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.id", is(1)))
+                .andExpect(jsonPath("$.data.name", is("jason")))
+                .andExpect(jsonPath("$.data.password", is("31245")))
+                .andExpect(jsonPath("$.data.userRole", is(1)));
     }
 
     @Test
@@ -158,7 +168,8 @@ public class UserControllerUnitTests {
         mvc.perform(put("/user/1")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("name exists")));
     }
 
     @Test
@@ -169,7 +180,8 @@ public class UserControllerUnitTests {
         mvc.perform(put("/user/3")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("user not exist")));
     }
 
 

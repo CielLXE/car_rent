@@ -4,6 +4,7 @@ import com.example.carrent.bean.Car;
 import com.example.carrent.bean.CarExample;
 import com.example.carrent.dao.CarDao;
 import com.example.carrent.enums.CarAvailableStatusEnum;
+import com.example.carrent.utils.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,11 +67,11 @@ public class CarService {
         Car now = carDao.selectByPrimaryKey(car.getId());
         //not exist
         if (now == null) {
-            return false;
+            throw new ServiceException("car not exist");
         }
-        //don't allow to update a car's avaliable
+        //don't allow to update a car's available
         if (car.getAvailable() != null && !now.getAvailable().equals(car.getAvailable())) {
-            return false;
+            throw new ServiceException("don't allow to update a car's available");
         }
         return carDao.updateByPrimaryKeySelective(car) == 1;
     }

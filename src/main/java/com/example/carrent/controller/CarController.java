@@ -1,12 +1,13 @@
 package com.example.carrent.controller;
 
 import com.example.carrent.bean.Car;
+import com.example.carrent.bean.Result;
 import com.example.carrent.services.CarService;
+import com.example.carrent.utils.ResultGenerator;
+import com.example.carrent.utils.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,40 +19,46 @@ public class CarController {
     private CarService carService;
 
     @GetMapping(value = "")
-    public List<Car> getAllCars() {
-        return carService.getAllCars();
+    public Result getAllCars() {
+        List<Car> cars = carService.getAllCars();
+        return ResultGenerator.genSuccessResult(cars);
     }
 
     @GetMapping(value = "/{id}")
-    public Car getCarById(@PathVariable Integer id) {
+    public Result getCarById(@PathVariable Integer id) {
         Car car = carService.getCarById(id);
         if (car != null) {
-            return car;
+            return ResultGenerator.genSuccessResult(car);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car did not exist");
+            return ResultGenerator.genFailResult("car not exist");
         }
     }
 
     @GetMapping(value = "/available")
-    public List<Car> getAllAvailableCars() {
-        return carService.getAvailableCars();
+    public Result getAllAvailableCars() {
+        List<Car> cars = carService.getAvailableCars();
+        return ResultGenerator.genSuccessResult(cars);
     }
 
     @PostMapping(value = "")
-    public int addCar(@RequestBody Car car) {
+    public Result addCar(@RequestBody Car car) {
         if (carService.addCar(car)) {
-            return car.getId();
+            return ResultGenerator.genSuccessResult(car.getId());
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Add car fail");
+            return ResultGenerator.genFailResult("add car fail");
         }
     }
 
     @PutMapping(value = "/{id}")
-    public void updateCar(@RequestBody Car car) {
-        if (carService.updateCar(car)) {
-            throw new ResponseStatusException(HttpStatus.OK, "Car updated");
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Car not exist or available modification prohibited");
+    public Result updateCar(@RequestBody Car car) {
+        try {
+            if (carService.updateCar(car)) {
+                return ResultGenerator.genSuccessResult();
+            } else {
+                return ResultGenerator.genFailResult("update car fail");
+            }
+        } catch (ServiceException e) {
+            return ResultGenerator.genFailResult(e.getMessage());
         }
     }
 }

@@ -8,6 +8,7 @@ import com.example.carrent.dao.RentDao;
 import com.example.carrent.dao.UserDao;
 import com.example.carrent.enums.CarAvailableStatusEnum;
 import com.example.carrent.enums.UserRoleEnum;
+import com.example.carrent.utils.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,13 +55,19 @@ public class RentService {
     public boolean addRent(Rent rent) {
         Car car = carDao.selectByPrimaryKey(rent.getCarId());
         //car not exist or car not available
-        if (car == null || car.getAvailable() == CarAvailableStatusEnum.unavailable.getCode()) {
-            return false;
+        if (car == null) {
+            throw new ServiceException("car not exist");
+        }
+        if (car.getAvailable() == CarAvailableStatusEnum.unavailable.getCode()) {
+            throw new ServiceException("car not available");
         }
         //user not exist or user is a admin
         User user = userDao.selectByPrimaryKey(rent.getUserId());
-        if (user == null || user.getUserRole() == UserRoleEnum.admin.getCode()) {
-            return false;
+        if (user == null) {
+            throw new ServiceException("user not exist");
+        }
+        if (user.getUserRole() == UserRoleEnum.admin.getCode()) {
+            throw new ServiceException("user is an admin");
         }
         //set car to unavailable
         car.setAvailable((byte) CarAvailableStatusEnum.unavailable.getCode());
@@ -79,12 +86,12 @@ public class RentService {
         Rent rent = rentDao.selectByPrimaryKey(id);
         //not exist
         if (rent == null) {
-            return false;
+            throw new ServiceException("rent not exist");
         }
         Car car = carDao.selectByPrimaryKey(rent.getCarId());
         //already returned
         if (rent.getActualReturnDate() != null || car.getAvailable() == (byte) CarAvailableStatusEnum.available.getCode()) {
-            return false;
+            throw new ServiceException("rent already returned");
         }
         rent.setActualReturnDate(new java.util.Date());
         car.setAvailable((byte) CarAvailableStatusEnum.available.getCode());

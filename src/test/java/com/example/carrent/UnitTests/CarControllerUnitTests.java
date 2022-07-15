@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = "application.properties")
@@ -45,44 +44,49 @@ public class CarControllerUnitTests {
     public void getAllCars() throws Exception{
         mvc.perform(get("/car")
                 .content(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].brand", is("Toyota")))
-                .andExpect(jsonPath("$[0].model", is("Camry")))
-                .andExpect(jsonPath("$[0].available", is(1)))
-                .andExpect(jsonPath("$[1].id", is(2)))
-                .andExpect(jsonPath("$[1].brand", is("BMW")))
-                .andExpect(jsonPath("$[1].model", is("650")))
-                .andExpect(jsonPath("$[1].available", is(0)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data", hasSize(2)))
+                .andExpect(jsonPath("$.data[0].id", is(1)))
+                .andExpect(jsonPath("$.data[0].brand", is("Toyota")))
+                .andExpect(jsonPath("$.data[0].model", is("Camry")))
+                .andExpect(jsonPath("$.data[0].available", is(1)))
+                .andExpect(jsonPath("$.data[1].id", is(2)))
+                .andExpect(jsonPath("$.data[1].brand", is("BMW")))
+                .andExpect(jsonPath("$.data[1].model", is("650")))
+                .andExpect(jsonPath("$.data[1].available", is(0)));
     }
 
     @Test
     public void getAllAvailableCars() throws Exception{
         mvc.perform(get("/car/available")
                 .content(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].brand", is("Toyota")))
-                .andExpect(jsonPath("$[0].model", is("Camry")))
-                .andExpect(jsonPath("$[0].available", is(1)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data", hasSize(1)))
+                .andExpect(jsonPath("$.data[0].id", is(1)))
+                .andExpect(jsonPath("$.data[0].brand", is("Toyota")))
+                .andExpect(jsonPath("$.data[0].model", is("Camry")))
+                .andExpect(jsonPath("$.data[0].available", is(1)));
     }
 
     @Test
     public void getCarByIdExists() throws Exception {
         mvc.perform(get("/car/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.brand", is("Toyota")))
-                .andExpect(jsonPath("$.model", is("Camry")))
-                .andExpect(jsonPath("$.available", is(1)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.id", is(1)))
+                .andExpect(jsonPath("$.data.brand", is("Toyota")))
+                .andExpect(jsonPath("$.data.model", is("Camry")))
+                .andExpect(jsonPath("$.data.available", is(1)));
     }
 
     @Test
     public void getCarByIdNotExist() throws Exception {
         mvc.perform(get("/car/3"))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("car not exist")));
+
     }
 
     @Test
@@ -93,14 +97,16 @@ public class CarControllerUnitTests {
         mvc.perform(post("/car")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", is(3)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data", is(3)));
         mvc.perform(get("/car/3"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(3)))
-                .andExpect(jsonPath("$.brand", is("Toyota")))
-                .andExpect(jsonPath("$.model", is("Camry")))
-                .andExpect(jsonPath("$.available", is(1)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.id", is(3)))
+                .andExpect(jsonPath("$.data.brand", is("Toyota")))
+                .andExpect(jsonPath("$.data.model", is("Camry")))
+                .andExpect(jsonPath("$.data.available", is(1)));
     }
 
     @Test
@@ -111,13 +117,15 @@ public class CarControllerUnitTests {
         mvc.perform(put("/car/1")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")));
         mvc.perform(get("/car/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.brand", is("Toyota")))
-                .andExpect(jsonPath("$.model", is("Century")))
-                .andExpect(jsonPath("$.available", is(1)));
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data.id", is(1)))
+                .andExpect(jsonPath("$.data.brand", is("Toyota")))
+                .andExpect(jsonPath("$.data.model", is("Century")))
+                .andExpect(jsonPath("$.data.available", is(1)));
     }
 
     @Test
@@ -128,7 +136,8 @@ public class CarControllerUnitTests {
         mvc.perform(put("/car/1")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("don't allow to update a car's available")));
     }
 
     @Test
@@ -139,7 +148,8 @@ public class CarControllerUnitTests {
         mvc.perform(put("/car/3")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.code", is(10001)))
+                .andExpect(jsonPath("$.message", is("car not exist")));
     }
 
 }

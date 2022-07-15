@@ -1,7 +1,11 @@
 package com.example.carrent.controller;
 
+import com.example.carrent.bean.Car;
+import com.example.carrent.bean.Result;
 import com.example.carrent.bean.User;
 import com.example.carrent.services.UserService;
+import com.example.carrent.utils.ResultGenerator;
+import com.example.carrent.utils.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,45 +21,54 @@ public class UserController {
     private UserService userService;
 
     @GetMapping(value = "")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public Result getAllUsers() {
+        List<User> users =  userService.getAllUsers();
+        return ResultGenerator.genSuccessResult(users);
     }
 
     @GetMapping(value = "/{id}")
-    public User getUserById(@PathVariable Integer id) {
+    public Result getUserById(@PathVariable Integer id) {
         User user = userService.getUserById(id);
         if (user != null) {
-            return user;
+            return ResultGenerator.genSuccessResult(user);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User did not exist");
+            return ResultGenerator.genFailResult("user not exist");
         }
     }
 
     @PostMapping(value = "/login")
-    public User login(@RequestBody User user) {
-        User loginUser = userService.login(user);
-        if (loginUser != null) {
-            return loginUser;
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username and password did not match");
+    public Result login(@RequestBody User user) {
+        try {
+            User loginUser = userService.login(user);
+            return ResultGenerator.genSuccessResult(loginUser);
+        } catch (ServiceException e) {
+            return ResultGenerator.genFailResult(e.getMessage());
         }
     }
 
     @PostMapping(value = "")
-    public int addUser(@RequestBody User user) {
-        if (userService.addUser(user)) {
-            return user.getId();
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name exists");
+    public Result addUser(@RequestBody User user) {
+        try {
+            if (userService.addUser(user)) {
+                return ResultGenerator.genSuccessResult(user.getId());
+            } else {
+                return ResultGenerator.genFailResult("add user fail");
+            }
+        } catch (ServiceException e) {
+            return ResultGenerator.genFailResult(e.getMessage());
         }
     }
 
     @PutMapping(value = "/{id}")
-    public void putUser(@RequestBody User user) {
-        if (userService.updateUser(user)) {
-            throw new ResponseStatusException(HttpStatus.OK, "User updated");
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User did not exist or repeated user name");
+    public Result putUser(@RequestBody User user) {
+        try {
+            if (userService.updateUser(user)) {
+                return ResultGenerator.genSuccessResult();
+            } else {
+                return ResultGenerator.genFailResult("update user fail");
+            }
+        } catch (ServiceException e) {
+            return ResultGenerator.genFailResult(e.getMessage());
         }
     }
 
