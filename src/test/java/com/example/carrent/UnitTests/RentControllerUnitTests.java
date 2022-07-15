@@ -88,6 +88,32 @@ public class RentControllerUnitTests {
     }
 
     @Test
+    public void getRentByUserId() throws Exception {
+        mvc.perform(get("/rent/user/2"))
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data[0].id", is(1)))
+                .andExpect(jsonPath("$.data[0].carId", is(1)))
+                .andExpect(jsonPath("$.data[0].userId", is(2)))
+                .andExpect(jsonPath("$.data[0].rentDate", is("2022-07-10")))
+                .andExpect(jsonPath("$.data[0].supposedReturnDate", is("2022-07-12")))
+                .andExpect(jsonPath("$.data[0].actualReturnDate", is("2022-07-11")));
+    }
+
+    @Test
+    public void getRentByCarId() throws Exception {
+        mvc.perform(get("/rent/car/1"))
+                .andExpect(jsonPath("$.code", is(10000)))
+                .andExpect(jsonPath("$.message", is("SUCCESS")))
+                .andExpect(jsonPath("$.data[0].id", is(1)))
+                .andExpect(jsonPath("$.data[0].carId", is(1)))
+                .andExpect(jsonPath("$.data[0].userId", is(2)))
+                .andExpect(jsonPath("$.data[0].rentDate", is("2022-07-10")))
+                .andExpect(jsonPath("$.data[0].supposedReturnDate", is("2022-07-12")))
+                .andExpect(jsonPath("$.data[0].actualReturnDate", is("2022-07-11")));
+    }
+
+    @Test
     public void addRent() throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateStart = simpleDateFormat.parse("2022-07-16");

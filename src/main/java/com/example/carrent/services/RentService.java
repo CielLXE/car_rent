@@ -1,8 +1,6 @@
 package com.example.carrent.services;
 
-import com.example.carrent.bean.Car;
-import com.example.carrent.bean.Rent;
-import com.example.carrent.bean.User;
+import com.example.carrent.bean.*;
 import com.example.carrent.dao.CarDao;
 import com.example.carrent.dao.RentDao;
 import com.example.carrent.dao.UserDao;
@@ -47,6 +45,32 @@ public class RentService {
     }
 
     /**
+     * get rent by user id
+     *
+     * @param userId
+     * @return list of rents
+     */
+    public List<Rent> getRentByUserId(Integer userId) {
+        RentExample example = new RentExample();
+        RentExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(userId);
+        return rentDao.selectByExample(example);
+    }
+
+    /**
+     * get rent by car id
+     *
+     * @param carId
+     * @return list of rents
+     */
+    public List<Rent> getRentByCarId(Integer carId) {
+        RentExample example = new RentExample();
+        RentExample.Criteria criteria = example.createCriteria();
+        criteria.andCarIdEqualTo(carId);
+        return rentDao.selectByExample(example);
+    }
+
+    /**
      * add a new rent, set this car to be unavailable
      *
      * @param rent
@@ -73,7 +97,7 @@ public class RentService {
         car.setAvailable((byte) CarAvailableStatusEnum.unavailable.getCode());
         carDao.updateByPrimaryKeySelective(car);
         //insert new rent record
-        return rentDao.insert(rent) == 1;
+        return rentDao.insertSelective(rent) == 1;
     }
 
     /**

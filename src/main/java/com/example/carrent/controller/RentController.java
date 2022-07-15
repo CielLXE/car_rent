@@ -36,6 +36,19 @@ public class RentController {
         }
     }
 
+    @GetMapping(value = "/user/{id}")
+    public Result getRentByUserId(@PathVariable Integer id) {
+        List<Rent> rents = rentService.getRentByUserId(id);
+        return ResultGenerator.genSuccessResult(rents);
+    }
+
+    @GetMapping(value = "/car/{id}")
+    public Result getRentByCarId(@PathVariable Integer id) {
+        List<Rent> rents = rentService.getRentByCarId(id);
+        return ResultGenerator.genSuccessResult(rents);
+
+    }
+
     @PostMapping(value = "")
     public Result addRent(@RequestBody Rent rent) {
         try {

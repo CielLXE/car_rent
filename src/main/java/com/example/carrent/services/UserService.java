@@ -69,7 +69,7 @@ public class UserService {
         if (store != null && store.size() != 0) {
             throw new ServiceException("name exists");
         }
-        return userDao.insert(user) == 1;
+        return userDao.insertSelective(user) == 1;
     }
 
     /**

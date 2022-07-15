@@ -54,7 +54,7 @@ public class CarService {
      * @return true:success false:fail
      */
     public boolean addCar(Car car) {
-        return carDao.insert(car) == 1;
+        return carDao.insertSelective(car) == 1;
     }
 
     /**

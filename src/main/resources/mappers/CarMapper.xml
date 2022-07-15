@@ -109,7 +109,7 @@
     values (#{id,jdbcType=INTEGER}, #{brand,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, 
       #{available,jdbcType=TINYINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.example.carrent.bean.Car">
+  <insert id="insertSelective" parameterType="com.example.carrent.bean.Car" useGeneratedKeys="true" keyProperty="id">
     insert into car
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

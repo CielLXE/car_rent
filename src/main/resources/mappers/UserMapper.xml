@@ -109,7 +109,7 @@
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{userRole,jdbcType=TINYINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.example.carrent.bean.User">
+  <insert id="insertSelective" parameterType="com.example.carrent.bean.User" useGeneratedKeys="true" keyProperty="id">
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

@@ -113,7 +113,7 @@
       #{rentDate,jdbcType=DATE}, #{supposedReturnDate,jdbcType=DATE}, #{actualReturnDate,jdbcType=DATE}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.example.carrent.bean.Rent">
+  <insert id="insertSelective" parameterType="com.example.carrent.bean.Rent" useGeneratedKeys="true" keyProperty="id">
     insert into rent
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
