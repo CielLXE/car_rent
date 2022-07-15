@@ -6,6 +6,8 @@ import com.example.carrent.bean.User;
 import com.example.carrent.services.UserService;
 import com.example.carrent.utils.ResultGenerator;
 import com.example.carrent.utils.ServiceException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,17 +18,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/user", produces = { MediaType.APPLICATION_JSON_VALUE })
+@Api
 public class UserController {
     @Autowired
     private UserService userService;
 
     @GetMapping(value = "")
+    @ApiOperation(value = "get all users in the database")
     public Result getAllUsers() {
         List<User> users =  userService.getAllUsers();
         return ResultGenerator.genSuccessResult(users);
     }
 
     @GetMapping(value = "/{id}")
+    @ApiOperation(value = "get user by primary key - id")
     public Result getUserById(@PathVariable Integer id) {
         User user = userService.getUserById(id);
         if (user != null) {
@@ -37,6 +42,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
+    @ApiOperation(value = "login and verify if user legal : user exists and password matches")
     public Result login(@RequestBody User user) {
         try {
             User loginUser = userService.login(user);
@@ -47,6 +53,7 @@ public class UserController {
     }
 
     @PostMapping(value = "")
+    @ApiOperation(value = "add a new user with unique name")
     public Result addUser(@RequestBody User user) {
         try {
             if (userService.addUser(user)) {
@@ -60,6 +67,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
+    @ApiOperation(value = "update a user's information by primary key - id")
     public Result putUser(@RequestBody User user) {
         try {
             if (userService.updateUser(user)) {
